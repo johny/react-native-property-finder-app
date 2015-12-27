@@ -138,8 +138,11 @@ class SearchPage extends Component {
         </View>
 
         <View style={styles.locationBox}>
-          <TouchableHighlight style={styles.button} underlayColor="#99d9f4">
-            <Text style={styles.buttonText}>Seach in my location</Text>
+          <TouchableHighlight
+            style={styles.button}
+            underlayColor="#99d9f4"
+            onPress={this.onLocationPressed.bind(this)}>
+              <Text style={styles.buttonText}>Seach in my location</Text>
           </TouchableHighlight>
         </View>
 
@@ -155,6 +158,22 @@ class SearchPage extends Component {
 
   onSearchTextChanged(event) {
     this.setState({searchString: event.nativeEvent.text });
+  }
+
+  onLocationPressed(event) {
+
+    console.log('onLocationPressed...');
+
+    navigator.geolocation.getCurrentPosition(location => {
+      var search = `${location.coords.latitude},${location.coords.longitude}`;
+      this.setState({ searchString: search });
+      var query = urlForQueryAndPage('centre_point', search, 1);
+      this._executeQuery(query);
+    }, error => {
+      this.setState({
+        message: `There was a problem with obtaining your location: ${error}`
+      });
+    },{enableHighAccuracy: true, timeout: 20000, maximumAge: 1000});
   }
 
   onSearchPressed() {
