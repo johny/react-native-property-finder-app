@@ -1,6 +1,8 @@
 'use strict';
 
 var React = require('react-native');
+var SearchResults = require('./SearchResults');
+
 var {
   ActivityIndicatorIOS,
   Component,
@@ -180,7 +182,17 @@ class SearchPage extends Component {
     this.setState({isLoading: false, message: ''});
 
     if(response.application_response_code.substr(0,1) === '1') {
-      console.log(`Found properties: ${response.listings.length}`);
+
+      console.log(response.listings);
+
+      this.props.navigator.push({
+        title: 'Results',
+        component: SearchResults,
+        passProps: {
+          listing: response.listings
+        }
+      })
+
     } else {
       this.setState({message: 'Location not recognized. Please try again!'});
     }
