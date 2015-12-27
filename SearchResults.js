@@ -1,6 +1,7 @@
 'use strict';
 
 var React = require('react-native');
+var PropertyDetails= require('./PropertyDetails');
 
 var {
   Component,
@@ -24,19 +25,15 @@ var styles = StyleSheet.create({
     flex: 1
   },
 
-  separator: {
-    height: 1,
-    backgroundColor: '#dddddd'
-  },
-
   price: {
     fontSize: 25,
     fontWeight: 'bold',
-    color: '#4b8bec'
+    color: '#464646'
   },
 
   title: {
     fontSize: 20,
+    fontWeight: 'bold',
     color: '#464646'
   },
 
@@ -63,15 +60,13 @@ class SearchResults extends Component {
 
   renderRow(rowData, sectionID, rowID) {
 
-    var price = rowData.price_formatted.split(' ')[0];
-
     return (
-      <TouchableHighlight underlayColor='#dddddd'>
+      <TouchableHighlight underlayColor='#dddddd' onPress={() => this.onRowPress(rowData.guid)}>
         <View style={styles.rowContainer}>
           <Image style={styles.thumbnail} source={{uri: rowData.img_url}} />
           <View style={styles.textContainer}>
             <Text style={styles.title} numberOfLines={1}>{rowData.title}</Text>
-            <Text style={styles.price}>{price}</Text>
+            <Text style={styles.price}>{rowData.price_formatted}</Text>
           </View>
         </View>
       </TouchableHighlight>
@@ -84,6 +79,18 @@ class SearchResults extends Component {
         dataSource={this.state.dataSource}
         renderRow={this.renderRow.bind(this)} />
     );
+  }
+
+  // UI events
+  onRowPress(propertyGUID) {
+    var property = this.props.listing.filter(prop => prop.guid === propertyGUID)[0]
+
+    this.props.navigator.push({
+      title: 'Property',
+      component: PropertyDetails,
+      passProps: {property: property}
+    })
+
   }
 
 }
